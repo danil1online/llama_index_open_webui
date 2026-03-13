@@ -265,7 +265,7 @@ echo, get_file_index, process_and_upload_file, query_llamaindex, clear_pdf_colle
 ```
 Используй инструмент `clear_pdf_collection`
 ```
-(images/example1.png)
+![Пример работы](images/example1.png)
 
 8. Дополнительные инструкции:
 8.1. Для удаления лишних файлов, которые были загружены пока проходило тестирование:
