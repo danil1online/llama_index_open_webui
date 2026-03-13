@@ -109,7 +109,8 @@ docker exec -it ollama ollama pull qwen3.5:9b
 ```
 
 1.2.4. Правки исходников:
-1.2.4.1. server.py
+
+1.2.4.1. [server.py](llamaindex/server.py)
 ```python
 api_base="http://host.docker.internal:1234/v1" 
 ```
@@ -125,7 +126,7 @@ model="qwen3.5-4b"
 model="qwen3.5:4b"
 ```
  
-1.2.4.2. settings.py
+1.2.4.2. [settings.py](llamaindex/settings.py)
 ```python
 lms_url: str = os.getenv("LMS_URL", "http://host.docker.internal:1234/v1")
 ```
