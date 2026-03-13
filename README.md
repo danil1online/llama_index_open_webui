@@ -184,7 +184,7 @@ docker logs -f llamaindex
 ## Функции работы с code collection **в работе** 
 # 6. Настраиваем работу модели в open-webui:
 ## 6.1. На момент составления данной инструкции лучше всего работала модель Qwen3.5-4B, она подключалась из:
-* встроенного в тот же docker-compose.yml Ollama (на данный момент закоменнтировано) через спец. "Подключение" "Ollama API" в Open-WebUI
+* встроенного в тот же docker-compose.yml Ollama (на данный момент [закоменнтировано](docker-compose.yml#L4)) через спец. "Подключение" "Ollama API" в Open-WebUI
 * сервер LM Studio через "Подключение" "API OpenAI" в Open-WebUI: http://host.docker.internal:1234/v1 -- данный вариант настроен в docker-compose.yml "по умолчанию"
 * сервер Ollama-docker-compose.yml через "Подключение" "API OpenAI" в Open-WebUI: http://host.docker.internal:11434/v1 -- данный вариант настроен вручную, тестируется
 Для подключения, например, LM Studio проверить:
