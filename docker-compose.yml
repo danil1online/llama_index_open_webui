@@ -1,0 +1,129 @@
+version: "3.9"
+
+services:
+#  ollama:
+#    image: ollama/ollama:latest
+#    container_name: ollama
+#    restart: always
+#    ports:
+#      - "11434:11434"
+#    environment:
+#      - OLLAMA_NUM_PARALLEL=1
+#      - OLLAMA_DEBUG=1
+#    volumes:
+#      - ollama:/root/.ollama
+#      # МОНТИРУЕМ ПАПКУ С GGUF:
+#      - /home/user1/work/ollama_webui_docker/guff_models:/root/models:ro
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: all
+#              capabilities: [gpu]
+#    healthcheck:
+#      test: ["CMD", "ollama", "list"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 20
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: always
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "stat /proc/1"] 
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  postgres:
+    image: postgres:15
+    container_name: openwebui-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: openwebui
+      POSTGRES_USER: webui
+      POSTGRES_PASSWORD: webuipass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: always
+    ports:
+      - "2999:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - OPENAI_API_BASE_URL=http://host.docker.internal:1234/v1
+      - OPENAI_API_KEY=lm-studio
+#      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_API_ENABLED=true
+      - ENABLE_API_KEYS=true
+      # Установка статического ключа для API самого WebUI
+      - STATIC_WEBUI_API_KEY=sk-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5ZmQ1Y2ZmLTNjZDEtNDNiMy1iNWZmLTMzNTdlNTVmMjdiNSIsImV4cCI6MTc3NTc2MzEwMCwianRpIjoiNjhiODIxOWItOWVjNS00MzI4LTkzY2YtNGY1YmEwOGUxZGY5In0.NvHAgowua6HT9pzEEr91sWJzCfqD8hRm7oDs0oqRICg
+      - WEBUI_SECRET_KEY=eyJpZCI6ImM5ZmQ1Y2ZmLTNjZDEtNDNiMy1iNWZmLTMzNTdlNTV
+      - DATABASE_URL=postgresql://webui:webuipass@postgres:5432/openwebui
+      - VECTOR_DB=qdrant
+      - QDRANT_URI=http://qdrant:6333
+      - QDRANT_API_KEY=
+    volumes:
+      - open-webui:/app/backend/data
+    depends_on:
+#      ollama:
+#        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+
+  llamaindex:
+    image: python:3.11
+    container_name: llamaindex
+    restart: always
+    working_dir: /app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./llamaindex:/app
+      - ./data:/data
+      - llamaindex_hf_cache:/root/.cache/huggingface
+      - llamaindex_cache:/root/.cache/llama_index
+      - llamaindex_pip_cache:/root/.cache/pip
+    command: >
+      sh -c "apt-get update && apt-get install -y build-essential python3-dev &&
+             pip install -r requirements.txt &&
+             python3 preload_models.py &&
+             uvicorn server:app --host 0.0.0.0 --port 8000"
+    environment:
+      - MODE=hf
+#      - OLLAMA_URL=http://ollama:11434
+      - QDRANT_URL=http://qdrant:6333
+      - COLLECTION_PDF=pdf_docs
+      - COLLECTION_CODE=code_docs
+    depends_on:
+#      ollama:
+#        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+volumes:
+#  ollama:
+  open-webui:
+  qdrant_storage:
+  postgres_data:
+  llamaindex_hf_cache:
+  llamaindex_cache:
+  llamaindex_pip_cache:
