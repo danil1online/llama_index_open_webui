@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-multipart
+llama-index-core
+llama-index-llms-ollama
+llama-index-embeddings-ollama
+llama-index-llms-openai-like
+llama-index-embeddings-huggingface
+llama-index-vector-stores-qdrant
+llama-index-readers-file
+qdrant-client
+sentence-transformers
+pydantic-settings
+tree-sitter==0.21.3
+tree-sitter-languages==1.10.2
+llama-index-readers-file
