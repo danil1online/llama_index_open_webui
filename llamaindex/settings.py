@@ -19,8 +19,12 @@ class Settings(BaseModel):
     #llm_model: str = os.getenv("LLM_MODEL", "qwen3.5-4b")
     
     # Если выбрали вариант Ollama-docker
-    lms_url: str = os.getenv("LMS_URL", "http://host.docker.internal:11434/v1")
-    llm_model: str = os.getenv("LLM_MODEL", "qwen3.5:4b")
+    #lms_url: str = os.getenv("LMS_URL", "http://host.docker.internal:11434/v1")
+    #llm_model: str = os.getenv("LLM_MODEL", "qwen3.5:4b")
+
+    # Если выбрали вариант llama.cpp
+    lms_url: str = os.getenv("LMS_URL", "http://host.docker.internal:8080/v1")
+    llm_model: str = os.getenv("LLM_MODEL", "Qwen3.5-4B-Q4_K_M.gguf")
 
     embed_model_hf: str = os.getenv("EMBED_MODEL_HF", "intfloat/multilingual-e5-large")
 
