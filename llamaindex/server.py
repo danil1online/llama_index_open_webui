@@ -50,8 +50,13 @@ Settings.llm = OpenAILike(
     #api_base="http://host.docker.internal:1234/v1",
     
     # Если выбрали Ollama
-    model="qwen3.5:4b",
-    api_base="http://host.docker.internal:11434/v1",
+    #model="qwen3.5:4b",
+    #api_base="http://host.docker.internal:11434/v1",
+
+    # Если выбрали llama.cpp
+    model="Qwen3.5-4B-Q4_K_M.gguf", # Имя должно совпадать
+    api_base="http://host.docker.internal:8080/v1",
+    
     api_key="lm-studio",
     is_chat_model=True,
     context_window=32768, # Явно укажите размер окна
